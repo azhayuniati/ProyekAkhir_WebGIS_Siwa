@@ -1,0 +1,116 @@
+<!doctype html>
+
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>Candi Siwa — Virtual Tour</title>
+    <link rel="stylesheet" href="css/style.css?v=2" />
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+
+    <div id="loadScreen">
+      <div class="icon"><img src="assets/logo.png" alt="Candi Siwa" /></div>
+      <div class="sub" data-i18n="loadSubtitle"></div>
+      <h1>CANDI SIWA</h1>
+      <div class="sub">Virtual Heritage · Prambanan</div>
+      <div id="barWrap"><div id="barFill"></div></div>
+      <div id="barTxt" data-i18n="loadInit">Menginisialisasi...</div>
+      <div id="stageTxt">—</div>
+      <div id="errBox"></div>
+    </div>
+
+    <div id="entryScreen" class="hidden">
+      <div id="entryLangSwitch">
+        <button class="langBtn active" data-lang="id" type="button">Bahasa Indonesia</button>
+        <button class="langBtn" data-lang="en" type="button">English</button>
+      </div>
+      <h2 data-i18n="entryTitle">CANDI SIWA</h2>
+      <p data-i18n="entrySubtitle">PRAMBANAN · ABAD IX MASEHI</p>
+      <p class="note" data-i18n="entryNote">Klik canvas untuk mengunci mouse · ESC untuk keluar</p>
+      <button id="enterBtn" data-i18n="entryButton">MASUK VIRTUAL TOUR</button>
+    </div>
+
+    <div id="topbar">
+      <span class="ttl" data-i18n="topbarTitle">Candi Siwa Prambanan</span>
+      <span class="tloc" data-i18n="topbarLocation">Kompleks Prambanan, Jawa Tengah</span>
+      <span class="tera" data-i18n="topbarEra">Abad IX M</span>
+      <div id="langSwitch">
+        <button class="langBtn active" data-lang="id" type="button">ID</button>
+        <button class="langBtn" data-lang="en" type="button">EN</button>
+      </div>
+    </div>
+    <div id="modeBtns">
+      <button type="button" class="mbtn" id="btnSV">Street View</button>
+      <button type="button" class="mbtn active" id="btnOrbit">Orbit</button>
+    </div>
+    <div id="fpsBox">FPS: --</div>
+    <div id="xhair"></div>
+    <div id="lockMsg" data-i18n="lockMsg">Klik canvas untuk mengunci mouse</div>
+
+    <div id="info">
+      <h3 data-i18n="infoTitle">CANDI SIWA</h3>
+      <div class="iloc" data-i18n="infoLoc">Kompleks Prambanan, DIY</div>
+      <div class="irow"><span data-i18n="rowHeight">Tinggi Asli</span> <span>47 m</span></div>
+      <div class="irow"><span data-i18n="rowBuilt">Dibangun</span> <span>~850 M</span></div>
+      <div class="irow"><span data-i18n="rowStyle">Gaya</span> <span>Jawa Tengah</span></div>
+      <div class="irow"><span data-i18n="rowMaterial">Material</span> <span>Andesit</span></div>
+      <div class="irow"><span data-i18n="rowReligion">Agama</span> <span>Hindu Śiwa</span></div>
+    </div>
+    <div id="mmBox"><canvas id="mm" width="290" height="290"></canvas></div>
+    <div id="hints">
+      <div class="hrow">
+        <span class="hk">W A S D</span> <span data-i18n="hintWalk">Berjalan</span><br />
+        <span class="hk">Mouse</span> <span data-i18n="hintLook">Melihat</span><br />
+        <span class="hk">Shift</span> <span data-i18n="hintRun">Berlari</span><br />
+        <span class="hk">Space</span> <span data-i18n="hintJump">Lompat</span><br />
+        <span class="hk">E</span> <span data-i18n="hintInfo">Info titik terdekat</span><br />
+        <span class="hk">ESC</span> <span data-i18n="hintExit">Keluar mode</span>
+      </div>
+    </div>
+
+    <!-- Layer titik POI (muncul hanya saat Street View) -->
+    <div id="poiLayer"></div>
+
+    <!-- Prompt interaksi saat dekat sebuah titik -->
+    <div id="poiPrompt" class="hidden"><span class="poiPromptKey">E</span> <span data-i18n="poiPromptTxt">Lihat informasi</span></div>
+
+    <!-- Virtual joystick (mobile only) — geser jempol dari tengah buat jalan arahnya di-map ke K.KeyW/S/A/D yang sama dgn WASD desktop. -->
+    <div id="joystick">
+      <div id="joystickKnob"></div>
+    </div>
+
+    <!-- Popup detail POI -->
+    <div id="poiModal" class="hidden">
+      <div id="poiCard">
+        <button id="poiClose" aria-label="Tutup">✕</button>
+        <div id="poiImgFrame">
+          <img id="poiImg" alt="" />
+        </div>
+        <div id="poiBody">
+          <span id="poiDir" class="poiDir">—</span>
+          <h3 id="poiTitle">—</h3>
+          <p id="poiDesc">—</p>
+          <button id="poiAudioBtn" class="audioBtn" type="button">
+            <span id="poiAudioIcon">▶</span>
+            <span id="poiAudioLabel">Dengarkan</span>
+          </button>
+          <audio id="poiAudio" preload="none"></audio>
+        </div>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./library/three/build/three.module.js",
+          "three/": "./library/three/",
+          "three-mesh-bvh": "./library/three-mesh-bvh/build/index.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="js/main.js?v=2"></script>
+  </body>
+</html>

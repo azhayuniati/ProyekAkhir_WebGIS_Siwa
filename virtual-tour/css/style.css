@@ -1,0 +1,952 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap");
+:root {
+  /* — token dari azhayuniati_design.md — */
+  --color-primary: #2a2119;
+  --color-on-primary: #ffffff;
+  --color-background: #ffda3d;
+  --color-surface: #2a2119;
+  --color-border: #d2c7bc;
+  --color-text: #2a2119;
+  --color-text-muted: #ebe8db;
+  --color-accent: #3d6b65;
+  --color-accent-soft: rgba(61, 107, 101, 0.14);
+
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-heading: "DM Serif Display", Georgia, serif;
+  --font-body: "Instrument Sans", sans-serif;
+  --font-mono: "DM Mono", monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 32px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 40px;
+  --space-10: 48px;
+
+  --shadow-card: rgba(0, 0, 0, 0.2) 0px 4px 16px 0px;
+
+  --dur-fast: 200ms;
+  --dur-base: 700ms;
+  --dur-slow: 900ms;
+  --ease: ease;
+
+  /* — sisa token lama, tetap dipakai selector lain untuk sementara — */
+  --accent: var(--color-accent);
+  --accent-light: #4f8a82;
+  --accent-soft: var(--color-accent-soft);
+  --ink: #202124;
+  --ink-mid: #5f6368;
+  --ink-soft: #9aa0a6;
+  --panel: rgba(255, 255, 255, 0.94);
+  --panel-line: rgba(32, 33, 36, 0.08);
+  --shadow: 0 8px 28px rgba(32, 33, 36, 0.14);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  overflow: hidden;
+  height: 100vh;
+  background: var(--color-background);
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: -0.5px;
+}
+#c {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+#loadScreen {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  color: var(--color-text);
+  overflow: hidden; /* jaga foto tetap di dalam bingkai */
+}
+#loadScreen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1; /* di belakang icon/judul/progress bar, tanpa perlu ubah anak lain */
+  background-image: url("../assets/load-bg.JPG");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1; /* ← atur transparansi foto di sini, 0–1 */
+}
+.icon {
+  animation: pulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 10px rgba(193, 101, 60, 0.25));
+}
+.icon img {
+  width: 75px; /* ganti sesuai ukuran yang kamu mau */
+  height: 75px;
+  display: block;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.07);
+  }
+}
+#loadScreen h1 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 120px;
+  color: var(--color-text);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.sub {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--color-accent);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+#barWrap {
+  width: 320px;
+  height: 4px;
+  background: rgba(32, 33, 36, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+#barFill {
+  height: 100%;
+  background: var(--color-accent);
+  width: 0%;
+  transition: width var(--dur-fast) var(--ease);
+  border-radius: var(--radius-sm);
+}
+#barTxt {
+  font-size: 15px;
+  color: var(--ink-mid);
+}
+#stageTxt {
+  font-size: 11px;
+  color: var(--ink-soft);
+  min-height: 16px;
+}
+#errBox {
+  display: none;
+  background: #fdf1ee;
+  border: 1px solid #f0c4b8;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 12px;
+  color: #b3401f;
+  line-height: 2;
+  width: 420px;
+  font-family: monospace;
+}
+
+#entryScreen {
+  position: absolute;
+  inset: 0;
+  z-index: 150;
+  background: linear-gradient(rgba(255, 218, 61, 0.82), rgba(255, 218, 61, 0.82));
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+#entryScreen h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 120px;
+  color: var(--color-text);
+  letter-spacing: -3px;
+  line-height: 1;
+}
+#entryScreen p {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-primary);
+  letter-spacing: -0.3px;
+}
+#entryScreen .note {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-accent);
+  margin-top: var(--space-1);
+}
+
+#enterBtn {
+  margin-top: var(--space-3);
+  padding: 14px 40px;
+  border-radius: var(--radius-xl);
+  background: var(--color-accent);
+  color: var(--color-on-primary);
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: all var(--dur-fast) var(--ease);
+}
+#enterBtn:hover {
+  background: #345852;
+  transform: translateY(-1px);
+}
+
+#topbar {
+  position: absolute;
+  top: var(--space-5);
+  left: var(--space-5);
+  right: var(--space-5);
+  z-index: 10;
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(10px);
+  width: fit-content;
+  pointer-events: none;
+}
+.ttl {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--color-on-primary);
+  font-size: 17px;
+  letter-spacing: -0.5px;
+}
+.tloc {
+  font-family: var(--font-body);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  opacity: 0.75;
+}
+.tera {
+  font-family: var(--font-mono);
+  background: rgba(61, 107, 101, 0.22);
+  border: 1px solid var(--color-accent);
+  color: #8fd6cb;
+  padding: 3px 11px;
+  border-radius: var(--radius-md);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 1.2px;
+}
+
+#modeBtns {
+  position: absolute;
+  top: 88px;
+  left: var(--space-5);
+  z-index: 10;
+  display: flex;
+  gap: var(--space-1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: var(--space-1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(10px);
+}
+.mbtn {
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  padding: 8px 16px;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: all var(--dur-fast) var(--ease);
+}
+.mbtn:hover {
+  color: #8fd6cb;
+}
+.mbtn.active {
+  background: var(--color-accent);
+  color: var(--color-on-primary);
+}
+
+#fpsBox {
+  position: absolute;
+  top: 88px;
+  right: var(--space-5);
+  z-index: 10;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text-muted);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  pointer-events: none;
+  line-height: 2.18;
+  backdrop-filter: blur(10px);
+}
+
+#info {
+  position: absolute;
+  bottom: var(--space-6);
+  left: var(--space-5);
+  z-index: 10;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  width: 230px;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+#info h3 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--color-on-primary);
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  margin-bottom: var(--space-1);
+}
+.iloc {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #8fd6cb;
+  letter-spacing: 0.8px;
+  margin-bottom: var(--space-3);
+  font-weight: 400;
+}
+.irow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  opacity: 0.8;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(210, 199, 188, 0.2);
+}
+.irow span {
+  color: var(--color-on-primary);
+  opacity: 1;
+  font-weight: 600;
+}
+
+#mmBox {
+  position: absolute;
+  bottom: var(--space-6);
+  right: var(--space-5);
+  z-index: 10;
+  width: 218px;
+  height: 218px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  pointer-events: none;
+}
+#mm {
+  width: 218px;
+  height: 218px;
+  display: block;
+}
+
+#hints {
+  position: absolute;
+  bottom: var(--space-6);
+  left: 266px;
+  z-index: 10;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+.hrow {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  opacity: 0.85;
+  line-height: 2.2;
+}
+.hk {
+  background: rgba(61, 107, 101, 0.25);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #8fd6cb;
+  font-weight: 400;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE LAYOUT OVERRIDES
+   Body dapat class "is-mobile" dari JS (deteksi userAgent, sama
+   dengan flag isMobile yang dipakai buat pixel ratio & touch control).
+   Desktop TIDAK kena apa pun di bawah ini.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Load screen & entry (home) screen — h1/h2 aslinya 120px, didesain buat
+   layar lebar. Di HP itu jelas kegedean (beberapa huruf saja sudah
+   memenuhi lebar layar), jadi diperkecil drastis + elemen lain
+   dirapikan biar muat di layar sempit. */
+.is-mobile #loadScreen h1,
+.is-mobile #entryScreen h2 {
+  font-size: 44px;
+  letter-spacing: -1px;
+}
+.is-mobile .icon img {
+  width: 52px;
+  height: 52px;
+}
+.is-mobile .sub {
+  font-size: 12px;
+  letter-spacing: 0.8px;
+}
+.is-mobile #barWrap {
+  width: min(260px, 70vw);
+}
+.is-mobile #barTxt {
+  font-size: 13px;
+}
+.is-mobile #stageTxt {
+  font-size: 10px;
+}
+.is-mobile #errBox {
+  width: min(340px, 82vw);
+  font-size: 11px;
+}
+.is-mobile #entryScreen p {
+  font-size: 13px;
+}
+.is-mobile #entryScreen .note {
+  font-size: 10px;
+  text-align: center;
+  padding: 0 var(--space-4);
+}
+.is-mobile #enterBtn {
+  padding: 12px 32px;
+  font-size: 13px;
+}
+.is-mobile #entryLangSwitch .langBtn {
+  font-size: 11px;
+  padding: 6px 12px;
+}
+
+.is-mobile #topbar {
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  max-width: calc(100vw - 2 * var(--space-3));
+  left: var(--space-3);
+  right: var(--space-3);
+}
+.is-mobile .ttl {
+  font-size: 14px;
+}
+.is-mobile .tloc {
+  font-size: 10px;
+}
+.is-mobile .tera {
+  font-size: 9px;
+  padding: 2px 7px;
+}
+.is-mobile #modeBtns {
+  top: 122px; /* topbar mobile bisa 2 baris, kasih jarak lebih */
+  left: var(--space-3);
+}
+.is-mobile #fpsBox {
+  top: 122px;
+  right: var(--space-3);
+  font-size: 10px;
+  padding: 6px 10px;
+}
+
+/* Info card: dari nempel di bawah (nabrak panah navigasi) → dipindah ke
+   atas, kanan, di bawah FPS box. Dibikin lebih ringkas juga. */
+.is-mobile #info {
+  bottom: var(--space-3);
+  top: auto;
+  left: var(--space-3);
+  right: auto;
+  width: 148px;
+  padding: var(--space-3);
+}
+.is-mobile #info h3 {
+  font-size: 14px;
+}
+.is-mobile .iloc {
+  font-size: 8px;
+  margin-bottom: var(--space-2);
+}
+.is-mobile .irow {
+  font-size: 10px;
+  padding: 4px 0;
+}
+/* Minimap: diperkecil + digeser ke pojok kanan bawah (kiri bawah sudah
+   dipakai virtual joystick). */
+.is-mobile #mmBox {
+  left: auto;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  width: 92px;
+  height: 92px;
+}
+.is-mobile #mm {
+  width: 92px;
+  height: 92px;
+}
+
+/* Prompt "Lihat informasi": dibikin bisa di-tap (lihat Fix 3 di JS),
+   badge tombol "E" disembunyikan karena HP tidak punya keyboard. */
+.is-mobile #poiPrompt {
+  pointer-events: auto;
+  cursor: pointer;
+  top: 60%;
+}
+.is-mobile .poiPromptKey {
+  display: none;
+}
+
+/* Target tap poiDot diperbesar sedikit — 16px terlalu kecil buat jari */
+.is-mobile .poiDot {
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+}
+
+/* Popup deskripsi arca: di desktop lebar 380px + gambar rasio 1:1 pas,
+   tapi di HP kegedean (gambar kotak penuh makan banyak layar). Diperkecil
+   + gambar dipepatkan (bukan 1:1 lagi) + teks dirapetin, dan dikasih
+   max-height + scroll jaga-jaga kalau deskripsinya panjang. */
+.is-mobile #poiCard {
+  width: 280px;
+  max-width: 82vw;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+.is-mobile #poiImgFrame {
+  aspect-ratio: 4 / 3;
+}
+.is-mobile #poiBody {
+  padding: 14px 16px 16px;
+}
+.is-mobile #poiTitle {
+  font-size: 19px;
+  margin-bottom: var(--space-2);
+}
+.is-mobile #poiDesc {
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+#xhair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  display: none;
+  width: 14px;
+  height: 14px;
+}
+#xhair::before,
+#xhair::after {
+  content: "";
+  position: absolute;
+  background: var(--color-background);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+#xhair::before {
+  width: 1px;
+  height: 14px;
+  left: 6px;
+  top: 0;
+}
+#xhair::after {
+  width: 14px;
+  height: 1px;
+  left: 0;
+  top: 6px;
+}
+
+#lockMsg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  display: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 14px 26px;
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#calibToast {
+  position: fixed;
+  left: 50%;
+  bottom: 90px;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-accent);
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: var(--radius-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+  z-index: 50;
+}
+#calibToast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== POI: titik pada dunia 3D ===== */
+#poiLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  display: none;
+}
+.poiDot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid var(--color-background);
+  pointer-events: auto;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 4px rgba(61, 107, 101, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.35);
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+.poiDot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent);
+  opacity: 0.6;
+  animation: poiPulse var(--dur-slow) ease-out infinite;
+}
+.poiDot.near {
+  background: #8fd6cb;
+  transform: scale(1.15);
+}
+@keyframes poiPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+.poiLabel {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  pointer-events: none;
+}
+.audioBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: 8px 18px;
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--color-accent);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.audioBtn:hover {
+  background: #4f8a82;
+}
+
+/* ===== Prompt "Tekan E" ===== */
+#poiPrompt {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 15;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-on-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+.poiPromptKey {
+  background: var(--color-accent);
+  color: var(--color-on-primary);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+}
+
+/* ── Virtual joystick (mobile) ─────────────────────────────────────
+   Sengaja pakai background solid (bukan backdrop-filter) — blur di atas
+   canvas WebGL yang terus render itu mahal buat GPU mobile (lihat juga
+   catatan soal #fpsBox). Ditampilkan/disembunyikan lewat JS (isMobile). */
+#joystick {
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: rgba(42, 33, 25, 0.35);
+  border: 2px solid var(--color-border);
+  display: none; /* diaktifkan lewat JS saat isMobile && isSV */
+  touch-action: none;
+  z-index: 15;
+  -webkit-tap-highlight-color: transparent;
+}
+#joystickKnob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid var(--color-on-primary);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none; /* drag ditangani oleh #joystick, bukan knob-nya sendiri */
+}
+
+/* ===== Popup / kartu detail POI ===== */
+#poiModal {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: rgba(42, 33, 25, 0.65);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#poiCard {
+  position: relative;
+  width: 380px;
+  max-width: 90vw;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  animation: poiCardIn var(--dur-fast) var(--ease);
+}
+@keyframes poiCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+#poiClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-primary);
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+#poiClose:hover {
+  background: var(--color-background);
+}
+
+/* Bingkai gambar arca */
+#poiImgFrame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(135deg, #3a2f24, #241c15);
+  border-bottom: 4px solid var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#poiImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+#poiImgFrame.empty img {
+  display: none;
+}
+#poiImgFrame.empty::after {
+  content: attr(data-empty-text);
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  letter-spacing: 0.3px;
+}
+
+#poiBody {
+  padding: 18px 20px 22px;
+}
+.poiDir {
+  display: inline-block;
+  font-family: var(--font-mono);
+  background: rgba(61, 107, 101, 0.22);
+  border: 1px solid var(--color-accent);
+  color: #8fd6cb;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1.2px;
+  padding: 3px 10px;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+}
+#poiTitle {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 26px;
+  color: var(--color-on-primary);
+  letter-spacing: -0.5px;
+  margin-bottom: var(--space-3);
+}
+#poiDesc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  opacity: 0.85;
+  text-align: justify;
+}
+
+#entryLangSwitch {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+#entryLangSwitch .langBtn {
+  padding: 7px 18px;
+  font-size: 12px;
+}
+
+#langSwitch {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-1);
+}
+.langBtn {
+  border: 1px solid var(--color-accent);
+  background: transparent;
+  color: #8fd6cb;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+.langBtn.active {
+  background: var(--color-accent);
+  color: var(--color-on-primary);
+}
